@@ -1,6 +1,6 @@
 # fa-program
 A C++ Program for applying Automata Theory that can simulate FA such as converting NFA epsilon to DFA and test string.
-1. Interface Before Load FA file
+1. Interface Before Loading FA file
 ![](https://raw.githubusercontent.com/tsochetra/fa-program/master/img/1.png)
 
 2. Load FA file
