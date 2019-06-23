@@ -63,18 +63,19 @@ void reset(int ar[], int size) {
         ar[i] = 0; 
     } 
 } 
-
+// check which states are present in the e-closure 
+// map the states of FA to a alphabet state
 void check(int ar[], string S) { 
     int i, j; 
-
+    // loop each state
     int len = S.length(); 
     for (i = 0; i < len; i++) { 
-
+        // set alphabet name to state by knowing index
         j = int(S[i]) - 65; 
         ar[j]++; 
     }
 } 
-
+// find new closure states 
 string state(int ar[], int size, string S) { 
     int j, k = 0;
 
@@ -106,7 +107,7 @@ int closure(int ar[], int size) {
     } 
     return 100; 
 }
-
+// check that new DFA state can be entered in the DFA table or not
 int indexing(struct DFA *dfa) { 
     int i; 
 
@@ -150,7 +151,7 @@ void getClosure(int states, int symbols, string * NFA_TABLE, closure_table_list 
         addLast(closure_table, buffer); 
     }
 }
-
+// transition function from FA to DFA
 void trans(string S, int M, closure_table_list *closure_table, int states, int symbols,  string *NFA_TABLE, string TB) { 
 
     int len = S.length(); 
@@ -208,15 +209,16 @@ int new_states(struct DFA *dfa, string S) {
 // transit FA to DFA
 void Trans(int states, int symbols, string stateList, string *dfaStates) { 
 
-
+    // create table
     string NFA_TABLE[states][symbols + 1];
     string DFA_TABLE[100][symbols];
 
     DFA *dfa_states;
     dfa_states = new DFA[100];
 
+    // extract state from content
     string *listStates = split(stateList, '|');
-
+    // push state transition to table
     for(int i = 0; i< states; i++) {
         string *eachState = split(listStates[i], '.');
         for(int j = 0; j < symbols + 1; j++) {
@@ -228,26 +230,24 @@ void Trans(int states, int symbols, string stateList, string *dfaStates) {
     closure_table_list *closure_table;
     closure_table = new closure_table_list;
     closure_table->n = 0;
-
-
+    // get e-closure and fill in the list
     getClosure(states, symbols, (string*)NFA_TABLE, closure_table);
 
     dfa_states[last_index++].states = "-";
-
     dfa_states[last_index - 1].count = 1;
-
+    // get first e-closure from table
     buffer = getElement(closure_table, 0);
-
+    // push to dfa state and increase index by 1
     dfa_states[last_index++].states = buffer;
-
+    // temp variables
     int Sm = 1, ind = 1; 
     int start_index = 1;
     int count = 0;
-
+    // loop transition until, we can the same state again and again, no new state
     while (ind != -1) { 
         dfa_states[start_index].count = 1; 
         
-        for (int i = 0; i < symbols; i++) { 
+        for (int i = 0; i < symbols; i++) {
 
             trans(buffer, i, closure_table, states, symbols, (string*)NFA_TABLE, T_buf);
 
@@ -264,6 +264,7 @@ void Trans(int states, int symbols, string stateList, string *dfaStates) {
         count++;
     }
 
+    // create structure for returning the dfa string
     *dfaStates = *dfaStates + to_string(count) + "#";
     for(int i = 0; i < count; i++) {
         *dfaStates = *dfaStates + dfa_states[i+1].states;
@@ -286,7 +287,7 @@ void Trans(int states, int symbols, string stateList, string *dfaStates) {
             *dfaStates = *dfaStates + "|";
         }
     }
-
+    // clear memory
     buffer.clear();
     T_buf.clear();
     last_index = 0;
