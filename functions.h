@@ -9,6 +9,7 @@
 
 using namespace std;
 
+// split each character from string, to array of string (abc => [a, b, c])
 string *splitEach(string data) {
     string* arrayData = new string[data.length()];
 
@@ -18,7 +19,7 @@ string *splitEach(string data) {
 
     return arrayData;
 }
-
+// split string to array by a specific character (aa.be split by . => [aa, be])
 string *split(string data, char c) {
 
     int totalChar = 1;
@@ -50,6 +51,7 @@ string *split(string data, char c) {
     return arrayData;
 }
 
+// read content from file, and return content
 string readFile(string file) {
     ifstream inFile;
     string sum;
@@ -64,7 +66,7 @@ string readFile(string file) {
     inFile.close();
     return sum;
 }
-
+// delete file, and return boolean
 bool deleteFile(string file) {
     if(remove(("./data/" + file).c_str()) != 0) {
         
@@ -74,6 +76,20 @@ bool deleteFile(string file) {
         
         return true;
     }
+}
+
+// remove a specific character from the string (ababba remove b => aaa) 
+string removeChar(string str, char charRemove) { 
+    str.erase(remove(str.begin(), str.end(), charRemove), str.end());
+	str.erase(remove(str.begin(), str.end(), ' '), str.end());
+    return str; 
+}
+// write content to file
+void write_file(string name, string data) {
+	ofstream myfile;
+	myfile.open ("./data/" + name + ".fa");
+	myfile << data;
+	myfile.close();
 }
 
 #endif

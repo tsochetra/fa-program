@@ -1,3 +1,4 @@
+// include libraries
 #include<iostream>
 #include<stdlib.h>
 #include <fstream>
@@ -7,16 +8,21 @@
 
 using namespace std;
 
+// convert FA to DFA function
 void convertFA(string fa) {
+
     string temp;
     string *listSymbols, *listStates, *listFinalStates;
     int numStates, numSymbols, numfinalStates;
 
-    string *data = split(fa, '#');
+    // extract data from FA content
+    string *data = split(fa, '#'); 
 
     string *head = split(data[0], '.');
 
     numStates = stoi(head[0]);
+
+    data[1] = data[1] + "E";
 
     numSymbols = data[1].length();
 
@@ -28,8 +34,10 @@ void convertFA(string fa) {
 
     string dfa;
 
-    Trans(numStates, numStates - 1, data[2], &dfa);
+    // transit FA to DFA and store it in dfa
+    Trans(numStates, numSymbols - 1, data[2], &dfa);
 
+    // extract data from dfa string
     string *dfa_data = split(dfa, '#');
     string *dfa_states_list = split(dfa_data[1], '.');
     string *dfa_states = split(dfa_data[2], '|');
@@ -38,10 +46,12 @@ void convertFA(string fa) {
 
     cout<<"Your converted DFA table: "<<endl;
 	cout<<"   S.S\t| ";
+    // print symbols with no Epsilon anymore
 	for(int i = 0; i< numSymbols - 1; i++) {
 		cout<<listSymbols[i]<<"\t";
 	}
 	cout<<endl;
+    // print transition of each state
 	for(int i = 0; i< dfa_numStates; i++) {
         string *eachSymbols = split(dfa_states[i], '.');
 		cout<<"   "<<dfa_states_list[i]<<"\t| ";
@@ -51,19 +61,21 @@ void convertFA(string fa) {
 		cout<<endl;
 	}
 
-    string final_states[10];
+    string final_states[20]; // final state size up to 20 
     int index = 0;
+    // loop finding new state that has previous final state is also a final state, E final state => EF also final state
     for(int i = 0; i < numfinalStates; i++) {
         string search = listFinalStates[i];
-
+        // loop every new state
         for(int j = 0; j< dfa_numStates; j++) {
             string st = dfa_states_list[j];
-
+            // if new state contain previous final state, and push to the final state
             if (st.find(search) != string::npos) {
                 final_states[index++] = st;
             }
         }
     }
+    // print final states to console
     cout<<"Your final state: ";
     for(int i = 0; i< index; i++) {
         cout<<final_states[i];

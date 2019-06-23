@@ -1,18 +1,18 @@
 #ifndef TRANS_H
 #define TRANS_H
-
+// include libraries
 #include<iostream>
 #include<stdlib.h>
 #include<string>
 #include "functions.h"
 
 using namespace std;
-
+// create structure for storing temporary state for processing
 struct DFA { 
     string states; 
     int count; 
 };
-
+// linked list structure for storing closure of FA
 struct closure_table_element {
     string data;
     closure_table_element *next;
@@ -21,11 +21,11 @@ struct closure_table_list {
     int n;
     closure_table_element *head, *tail;
 };
-
+// temporary variable
 string buffer, T_buf;
- 
 int last_index = 0; 
 
+// add closure to the list
 void addLast(closure_table_list *l, string value) {
     closure_table_element *e;
     e = new closure_table_element;
@@ -45,18 +45,8 @@ void addLast(closure_table_list *l, string value) {
     l->n = l->n + 1;
 }
 
-int getLength(closure_table_list *l) {
-    int n = 0;
-    closure_table_element *e;
-    e = l->head;
-    while(e->next != NULL) {
-        n++;
-        e = e->next;
-    }
-    return n;
-}
-
-string display(closure_table_list *l , int index) {
+// return element data in list by index
+string getElement(closure_table_list *l , int index) {
     closure_table_element *e;
     e = l->head;
     for(int i = 0; i< index; i++) {
@@ -65,7 +55,7 @@ string display(closure_table_list *l , int index) {
     return e->data;
 }
 
-
+// reset each element of array to zero
 void reset(int ar[], int size) { 
     int i; 
 
@@ -104,17 +94,17 @@ string state(int ar[], int size, string S) {
     temp[k] = '\0'; 
     return temp;
 }
-
+// to pick the next closure from closure set
 int closure(int ar[], int size) { 
     int i; 
-
+    // check if next closure already existed in closure list
     for (i = 0; i < size; i++) { 
         if (ar[i] == 1) {
             return i;
         }
          
     } 
-    return (100); 
+    return 100; 
 }
 
 int indexing(struct DFA *dfa) { 
@@ -126,7 +116,7 @@ int indexing(struct DFA *dfa) {
     } 
     return -1; 
 }
-
+// get closure of FA and store it in the list for transition to DFA
 void getClosure(int states, int symbols, string * NFA_TABLE, closure_table_list *closure_table) { 
 
     int closure_ar[states];
@@ -152,7 +142,9 @@ void getClosure(int states, int symbols, string * NFA_TABLE, closure_table_list 
                 closure_ar[z]++; 
                 z = closure(closure_ar, states); 
             }
-        } 
+        }
+
+        buffer.clear();
         
         buffer = state(closure_ar, states, buffer); 
         addLast(closure_table, buffer); 
@@ -181,7 +173,7 @@ void trans(string S, int M, closure_table_list *closure_table, int states, int s
             while (g < sz) { 
                 k = int(temp[g]) - 65; 
 
-                temp2 = display(closure_table, k);
+                temp2 = getElement(closure_table, k);
                 check(arr, temp2);
                 g++; 
             } 
@@ -196,7 +188,7 @@ void trans(string S, int M, closure_table_list *closure_table, int states, int s
     }
 	
 }
-
+// to check new state in DFA
 int new_states(struct DFA *dfa, string S) { 
 
     int i; 
@@ -213,7 +205,9 @@ int new_states(struct DFA *dfa, string S) {
     return 1; 
 }
 
+// transit FA to DFA
 void Trans(int states, int symbols, string stateList, string *dfaStates) { 
+
 
     string NFA_TABLE[states][symbols + 1];
     string DFA_TABLE[100][symbols];
@@ -233,6 +227,7 @@ void Trans(int states, int symbols, string stateList, string *dfaStates) {
     int closure_ar[states]; 
     closure_table_list *closure_table;
     closure_table = new closure_table_list;
+    closure_table->n = 0;
 
 
     getClosure(states, symbols, (string*)NFA_TABLE, closure_table);
@@ -241,7 +236,7 @@ void Trans(int states, int symbols, string stateList, string *dfaStates) {
 
     dfa_states[last_index - 1].count = 1;
 
-    buffer = display(closure_table, 0);
+    buffer = getElement(closure_table, 0);
 
     dfa_states[last_index++].states = buffer;
 
@@ -295,5 +290,7 @@ void Trans(int states, int symbols, string stateList, string *dfaStates) {
     buffer.clear();
     T_buf.clear();
     last_index = 0;
+
 }
+
 #endif
